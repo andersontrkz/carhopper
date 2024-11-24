@@ -4,7 +4,7 @@ import RideService from '../services/ride.service';
 import { type IRideController } from '../interfaces/controllers/ride.interface';
 
 async function postEstimate(req: Request, res: Response, next: NextFunction) {
-    const { origin, destination, customer_id } = req.body as IRideController.IRideEstimate;
+    const { origin, destination, customer_id } = req.body as IRideController.IRideEstimateBody;
 
     try {
         const estimatedRide = await RideService.estimateRide({ origin, destination });
@@ -14,7 +14,7 @@ async function postEstimate(req: Request, res: Response, next: NextFunction) {
     }
 }
 
-async function postConfirm(req: Request, res: Response, next: NextFunction) {
+async function patchConfirm(req: Request, res: Response, next: NextFunction) {
     const {
         customer_id,
         origin,
@@ -23,7 +23,7 @@ async function postConfirm(req: Request, res: Response, next: NextFunction) {
         duration,
         driver,
         value,
-    } = req.body as IRideController.IRideConfirm;
+    } = req.body as IRideController.IRideConfirmBody;
 
     try {
         const ride = {
@@ -42,9 +42,22 @@ async function postConfirm(req: Request, res: Response, next: NextFunction) {
     }
 }
 
+async function getRidesHistory(req: Request, res: Response, next: NextFunction) {
+    const { customer_id } = req.params as IRideController.IRidesHistoryParams;
+    const { driver_id } = req.query as IRideController.IRidesHistoryQuery;
+
+    try {
+        const estimatedRide = await RideService.ridesHistory(customer_id, driver_id);
+        res.status(200).json(estimatedRide);
+    } catch (error) {
+        next(error);
+    }
+}
+
 const RideController = {
     postEstimate,
-    postConfirm,
+    patchConfirm,
+    getRidesHistory,
 };
 
 export default RideController;

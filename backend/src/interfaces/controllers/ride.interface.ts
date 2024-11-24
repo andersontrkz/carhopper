@@ -6,15 +6,23 @@ export namespace IRideController {
       duration: string;
     }
 
-    export interface IRideEstimate extends IAddresses {
+    export interface IRideEstimateBody extends IAddresses {
         customer_id: string;
     }
 
-    export interface IRideConfirm extends IRideEstimate, ILocationData {
+    export interface IRideConfirmBody extends IRideEstimateBody, ILocationData {
         driver: {
             id: number,
             name: string,
         },
         value: number,
+    }
+
+    export interface IRidesHistoryParams extends IRideEstimateBody, ILocationData {
+        customer_id: string;
+    }
+
+    export interface IRidesHistoryQuery extends IRideEstimateBody, ILocationData {
+        driver_id?: number;
     }
 }
