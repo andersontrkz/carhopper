@@ -7,5 +7,6 @@ import { rideEstimateSchema } from '../schemas/rideEstimate';
 const router = Router();
 
 router.post('/estimate', validateSchema(rideEstimateSchema), RideController.postEstimate);
+router.post('/confirm', validateSchema(rideEstimateSchema), RideController.postConfirm);
 
 export default router;

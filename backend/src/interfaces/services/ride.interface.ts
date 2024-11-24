@@ -9,10 +9,14 @@ export namespace IRideService {
       duration: string;
     }
 
+  export interface IGenerateDriverOptions extends IDriverOption {}
+
     export interface IEstimateRide extends IGoogleService.IRideData {
       routeResponse: DirectionsResponseData;
       options: IDriverOption[];
   }
 
-  export interface IGenerateDriverOptions extends IDriverOption {}
+  export interface IConfirmRide {
+      success: boolean;
+  }
 }
