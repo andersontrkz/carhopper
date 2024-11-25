@@ -43,8 +43,11 @@ async function patchConfirm(req: Request, res: Response, next: NextFunction) {
 }
 
 async function getRidesHistory(req: Request, res: Response, next: NextFunction) {
-    const { customer_id } = req.params as IRideController.IRidesHistoryParams;
-    const { driver_id } = req.query as IRideController.IRidesHistoryQuery;
+    // const { customer_id } = req.params as IRideController.IRidesHistoryParams;
+    // const { driver_id } = req.query as IRideController.IRidesHistoryQuery;
+
+    const { customer_id } = req.params as any;
+    const { driver_id } = req.query as any;
 
     try {
         const estimatedRide = await RideService.ridesHistory(customer_id, driver_id);

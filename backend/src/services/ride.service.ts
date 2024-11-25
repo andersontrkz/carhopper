@@ -1,11 +1,16 @@
-import { IAddresses } from "../interfaces/ride.interface";
-import { drivers as RDRIVERS } from "../data/driversData";
-import { type IDriver } from "src/interfaces/driver.interface";
-import { IRideService } from "src/interfaces/services/ride.interface";
+import { type IAddresses } from "../interfaces/ride.interface";
+import { type IRideService } from "src/interfaces/services/ride.interface";
 import { getRideData } from "./google.service";
-import { IRideController } from "src/interfaces/controllers/ride.interface";
+import { type IRideController } from "src/interfaces/controllers/ride.interface";
+import DriverService from "./driver.service";
+import { DriverBaseDTO, DriverDTO } from "../dtos/driver.dto";
+import RideModel from "../models/ride.model";
+import sequelize from "../config/database";
+import RideCustomerDriverModel from "../models/ride_customer_driver.model";
+import { RideDTO } from "../dtos/ride.dto";
+import DriverModel from "../models/driver.model";
 
-const generateDriverOptions = (drivers: IDriver[], distance: number): IRideService.IGenerateDriverOptions[] => drivers.map(driver => {
+const generateDriverOptions = (drivers: DriverDTO[], distance: number): IRideService.IGenerateDriverOptions[] => drivers.map(driver => {
     const estimateRideValue = (price: number): number => {
         return distance * price;
     };
@@ -16,38 +21,53 @@ const generateDriverOptions = (drivers: IDriver[], distance: number): IRideServi
         description: driver.description,
         vehicle: driver.vehicle,
         review: driver.review,
-        value: estimateRideValue(driver.pricePerKm)
+        value: estimateRideValue(driver.pricePerKm),
     };
 });
 
 const estimateRide = async (addresses: IAddresses): Promise<IRideService.IEstimateRide> => {
-    const filterAvaiableDrivers = (drivers: IDriver[], distance: number): IDriver[] => drivers.filter(({ minKm }) => minKm >= distance);
     const sortByValue = <T extends { value: number }[]>(items: T) => items.sort((a, b) => a.value - b.value);
 
     try {
         const rideData = await getRideData(addresses);
         const { distance } = rideData;
 
-        const avaiableDrivers = filterAvaiableDrivers(RDRIVERS, distance);
+        const avaiableDrivers = await DriverService.getAvaiableDriversWithReview(distance);
         const driverOptions = generateDriverOptions(avaiableDrivers, distance);
-    
-        return {
-            ...rideData,
-            options: sortByValue(driverOptions),
-        };
+
+        return { ...rideData, options: sortByValue(driverOptions) };
     } catch (error) {
         throw error;
     }
 }
 
-const confirmRide = async (ride: IRideController.IRidesHistoryQuery): Promise<IRideService.IConfirmRide> => {
-    const save = async (payload: any) => {
-        console.log('payload', payload)
-        return true;
-    };
-
+const confirmRide = async (ride: IRideController.IRideConfirmBody): Promise<IRideService.IConfirmRide> => {
     try {
-        await save(ride);
+        const { driver, customer_id, origin, destination, distance, duration, value } = ride;
+
+        await sequelize.transaction(async (transaction) => {
+            const confirmedRide = await RideModel.create(
+              {
+                origin,
+                destination,
+                distance,
+                duration,
+                value,
+              },
+              { transaction }
+            );
+
+      
+            await RideCustomerDriverModel.create(
+              {
+                rideId: confirmedRide.id,
+                driverId: driver.id,
+                customerId: customer_id
+              },
+              { transaction }
+            );
+          });
+      
         
         return { success: true };
     } catch (error) {
@@ -56,52 +76,27 @@ const confirmRide = async (ride: IRideController.IRidesHistoryQuery): Promise<IR
 }
 
 const ridesHistory = async (customer_id: string, driver_id: number): Promise<IRideService.IRidesHistory> => {
-    const getRides = async () => {
-        const filterAvaiableDrivers = (drivers: IDriver[], distance: number): IDriver[] => drivers.filter(({ minKm }) => minKm >= distance);
-        const avaiableDrivers = filterAvaiableDrivers(RDRIVERS, 1);
-        const driverOptions = generateDriverOptions(avaiableDrivers, 1);
+    const rides = await RideCustomerDriverModel.findAll({
+        where: driver_id ? { customer_id, driver_id } : { customer_id },
+        include: [
+            { model: RideModel, attributes: ['id', 'origin', 'destination', 'distance', 'duration', 'value', 'date'], as: 'ride' },
+            { model: DriverModel, attributes: ['id', 'name'], as: 'driver' },
+        ],
+        attributes: []
+    });
 
-        if (driver_id) {
-            return {
-                customer_id,
-                rides: driverOptions.filter(({ id }) => id === Number(driver_id)).map(({ id, name, value }) => {
-                    return {
-                        origin: "R. Washington Luiz, 559 - Boqueirão, Guarapuava - PR, 85020-300, Brazil",
-                        destination: "Av. Pref. Moacyr Júlio Silvestri, 944 - Centro, Guarapuava - PR, 85010-090, Brazil",
-                        distance: 4.085,
-                        duration: "9.15",
-                        driver: { id, name },
-                        value,
-                        date: new Date()
-                    }
-                }),
-            };
-        }
+    console.log('rideDTO', rides[0]);
 
-        return {
-            customer_id,
-            rides: driverOptions.map(({ id, name, value }) => {
-                return {
-                    origin: "R. Washington Luiz, 559 - Boqueirão, Guarapuava - PR, 85020-300, Brazil",
-                    destination: "Av. Pref. Moacyr Júlio Silvestri, 944 - Centro, Guarapuava - PR, 85010-090, Brazil",
-                    distance: 4.085,
-                    duration: "9.15",
-                    driver: { id, name },
-                    value,
-                    date: new Date()
-                }
-            }),
-        };
-    };
+    const ridesDTO = rides.map(({ ride, driver }) => {
+        const rideDTO = new RideDTO(ride);
+        const driverDTO = new DriverBaseDTO(driver);
 
-    try {
-        const rides = await getRides();
-        
-        return rides;
-    } catch (error) {
-        throw error;
-    }
-}
+        return { ...rideDTO, driver: driverDTO };
+    })
+
+    return { customer_id, rides: ridesDTO };
+};
+
 
 const RideService = {
     estimateRide,
