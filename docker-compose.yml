@@ -1,16 +1,35 @@
-version: '3.9'
+version: '3.8'
 
 services:
   backend:
+    container_name: backend
+    depends_on: 
+      - database
     build:
       context: ./backend
     ports:
       - 8080:8080
+    environment:
+      DB_HOST: database
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: caropper
 
   frontend:
+    container_name: frontend
     depends_on:
       - backend
     build:
       context: ./frontend
     ports:
       - 80:80
+
+  database:
+    image: postgres:17
+    container_name: database
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: caropper
+    ports:
+      - "5432:5432"
