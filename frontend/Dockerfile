@@ -4,7 +4,7 @@ WORKDIR /frontend
 
 COPY package*.json ./
 
-RUN npm install
+RUN yarn
 
 COPY . .
 
@@ -12,4 +12,4 @@ ENV PORT=80
 
 EXPOSE 80
 
-CMD ["npm", "start"]
+CMD ["yarn", "start"]
