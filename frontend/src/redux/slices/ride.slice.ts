@@ -19,27 +19,45 @@ const initialState: IRideState = {
   isLoading: false,
 };
 
+interface ErrorAction {
+  payload: { response: { data: { error_description?: string } } }
+}
+
 interface IRideConfirmThunk extends IAddresses, IRide {
   driver: { id: number, name: string };
   value: number;
 };
 
 export const rideEstimate = createAsyncThunk(
-  'ride/estimate', async (payload: IAddresses, { getState }
+  'ride/estimate', async (payload: IAddresses, { getState, rejectWithValue }
   ) => {
     const { auth: { customerId } }  = getState() as RootState;
-    return await postEstimate({ customer_id: customerId, ...payload });
+    try {
+      return await postEstimate({ customer_id: customerId, ...payload });
+    } catch (error) {
+      return rejectWithValue(error);
+    }
   });
 
-export const rideConfirm = createAsyncThunk('ride/confirm', async (payload: IRideConfirmThunk, { getState }) => {
-  const { auth: { customerId } }  = getState() as RootState;
-  return await patchConfirm({ customer_id: customerId, ...payload });
-});
+export const rideConfirm = createAsyncThunk(
+  'ride/confirm', async (payload: IRideConfirmThunk, { getState, rejectWithValue  }
+  ) => {
+    const { auth: { customerId } }  = getState() as RootState;
+    try {
+      return await patchConfirm({ customer_id: customerId, ...payload });
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  });
   
-export const ridesHistory = createAsyncThunk('ride/history', async (_, { getState }) => {
+export const ridesHistory = createAsyncThunk('ride/history', async (_, { getState, rejectWithValue }) => {
   const { auth: { customerId } }  = getState() as RootState;
+  try {
 
-  return await getRidesHistory({ customerId }, {});
+    return await getRidesHistory({ customerId }, {});
+  } catch (error) {
+    return rejectWithValue(error);
+  }
 });
 
 const rideSlice = createSlice({
@@ -59,16 +77,17 @@ const rideSlice = createSlice({
         state.driverOptions = options;
 
         if (!action.payload.options.length) {
-          toast('Nenhum motorista disponível para o destino informado.');
+          toast.info('Nenhum motorista disponível para o destino informado.');
         } else if (action.payload.options.length > 1) {
-          toast(`Foram encontrados ${action.payload.options.length} motoristas para o seu destino.`);
+          toast.info(`Foram encontrados ${action.payload.options.length} motoristas para o seu destino.`);
         } else {
-          toast(`Foi encontrado ${action.payload.options.length} motorista para o seu destino.`);
+          toast.info(`Foi encontrado ${action.payload.options.length} motorista para o seu destino.`);
         }
       })
-      .addCase(rideEstimate.rejected, (state) => {
+      .addCase(rideEstimate.rejected, (state, action) => {
         state.isLoading = false;
-        toast('rejected');
+        const { payload } = action as ErrorAction;
+        toast.error(payload?.response?.data?.error_description);
       })
 
       .addCase(rideConfirm.pending, (state) => {
@@ -76,22 +95,24 @@ const rideSlice = createSlice({
       })
       .addCase(rideConfirm.fulfilled, (state) => {
         state.isLoading = false;
-        toast('Sua viagem foi confirmada com sucesso.');
+        toast.success('Sua corrida foi confirmada com sucesso e já está disponível no seu hisrórico.');
       })
-      .addCase(rideConfirm.rejected, (state) => {
+      .addCase(rideConfirm.rejected, (state, action) => {
         state.isLoading = false;
-        toast('Falha ao confirmar sua viagem.');
+        const { payload } = action as ErrorAction;
+        toast.error(payload?.response?.data?.error_description);
       })
 
       .addCase(ridesHistory.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(ridesHistory.fulfilled, (state, action) => {
+      .addCase(ridesHistory.fulfilled, (state, { payload }) => {
         state.isLoading = false;
-        state.ridesHistory = action.payload.rides;
+        state.ridesHistory = payload.rides;
       })
-      .addCase(ridesHistory.rejected, (state) => {
-        state.isLoading = false;
+      .addCase(ridesHistory.rejected, (_state, action) => {
+        const { payload } = action as ErrorAction;
+        toast.error(payload?.response?.data?.error_description);
       });
   },
 });

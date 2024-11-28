@@ -1,4 +1,4 @@
-import { type ICustomError, type EErrorCode } from "../../interfaces/errors.interface";
+import { EErrorCode, ICustomError } from "@/types/interfaces/errors.interface";
 
 class BaseError extends Error {
   statusCode: number;

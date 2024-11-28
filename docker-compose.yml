@@ -10,10 +10,11 @@ services:
     ports:
       - 8080:8080
     environment:
-      DB_HOST: database
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_NAME: caropper
+      - NODE_API_GOOGLE_API_KEY=$GOOGLE_API_KEY
+      - DB_HOST=database
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=postgres
 
   frontend:
     container_name: frontend
@@ -23,6 +24,8 @@ services:
       context: ./frontend
     ports:
       - 80:80
+    environment:
+      - REACT_APP_GOOGLE_API_KEY=$GOOGLE_API_KEY
 
   database:
     image: postgres:17
@@ -30,6 +33,6 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: caropper
+      POSTGRES_DB: postgres
     ports:
       - "5432:5432"

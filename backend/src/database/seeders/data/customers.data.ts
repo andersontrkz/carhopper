@@ -1,0 +1,20 @@
+export const customers = [
+    { id: "3f8a9c21-87b5-4e5d-94a3-3c1d1d4e7b88" },
+    { id: "a52bfa0a-2e36-44a5-b8a5-8cf82e06bc1f" },
+    { id: "8f7e54f5-e983-44b5-94cf-5a7b4d4a59d4" },
+    { id: "62b27d98-3a94-420b-a982-3f3d9d4efbff" },
+    { id: "e8df3a1e-f8d7-4118-8b47-e742c651c1b5" },
+    { id: "f7e23c81-d98c-49d7-8a96-c7b7c26a5d45" },
+    { id: "d435a7bb-0b47-4a6b-86e9-f0c38c20f1c1" },
+    { id: "e06ac254-f7e9-49e4-bd68-9603d87ffcd1" },
+    { id: "2d238bfe-6d38-4678-90f0-ccd8b2c9e700" },
+    { id: "87717c32-b63c-4d25-9412-0de8f3b34599" },
+    { id: "61d7fd4e-c58d-4f00-bf38-42302e23d501" },
+    { id: "72fcecd5-02c9-47f6-87ad-b517ebd25e77" },
+    { id: "b29f00a1-8d6d-4426-b0b3-2997e2198b75" },
+    { id: "530cd6b1-9c93-4c5c-9751-2e0e31fa1a74" },
+    { id: "660bd7a4-8e68-428d-885d-b8c4d9999577" },
+    { id: "3135d1a4-5d91-4a90-ae91-feb60b7d1b90" },
+    { id: "15f682d5-e02f-4b56-b5a5-87b6a5536d8f" },
+    { id: "24c42b7f-b9b2-4b6d-b3ff-bf22f6eddd73" }
+];

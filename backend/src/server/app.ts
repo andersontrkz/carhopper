@@ -7,8 +7,8 @@ import cors from 'cors';
 import morgan from 'morgan';
 import helmet from 'helmet';
 
-import routers from '../routers';
-import errorHandler from '../middlewares/errorHandler';
+import errorHandler from '@/middlewares/errorHandler';
+import routers from '@/routers';
 
 dotenv.config({ path: '../.env' });
  

@@ -1,0 +1,20 @@
+export const rideCustomerDriverRelations = [
+    { rideId: 111, driverId: 111, customerId: "3f8a9c21-87b5-4e5d-94a3-3c1d1d4e7b88" },
+    { rideId: 112, driverId: 112, customerId: "a52bfa0a-2e36-44a5-b8a5-8cf82e06bc1f" },
+    { rideId: 113, driverId: 113, customerId: "8f7e54f5-e983-44b5-94cf-5a7b4d4a59d4" },
+    { rideId: 114, driverId: 114, customerId: "62b27d98-3a94-420b-a982-3f3d9d4efbff" },
+    { rideId: 115, driverId: 115, customerId: "e8df3a1e-f8d7-4118-8b47-e742c651c1b5" },
+    { rideId: 116, driverId: 116, customerId: "f7e23c81-d98c-49d7-8a96-c7b7c26a5d45" },
+    { rideId: 117, driverId: 117, customerId: "d435a7bb-0b47-4a6b-86e9-f0c38c20f1c1" },
+    { rideId: 118, driverId: 118, customerId: "e06ac254-f7e9-49e4-bd68-9603d87ffcd1" },
+    { rideId: 119, driverId: 119, customerId: "2d238bfe-6d38-4678-90f0-ccd8b2c9e700" },
+    { rideId: 1110, driverId: 1110, customerId: "87717c32-b63c-4d25-9412-0de8f3b34599" },
+    { rideId: 1111, driverId: 1111, customerId: "61d7fd4e-c58d-4f00-bf38-42302e23d501" },
+    { rideId: 1112, driverId: 1112, customerId: "72fcecd5-02c9-47f6-87ad-b517ebd25e77" },
+    { rideId: 1113, driverId: 1113, customerId: "b29f00a1-8d6d-4426-b0b3-2997e2198b75" },
+    { rideId: 1114, driverId: 1114, customerId: "530cd6b1-9c93-4c5c-9751-2e0e31fa1a74" },
+    { rideId: 1115, driverId: 1115, customerId: "660bd7a4-8e68-428d-885d-b8c4d9999577" },
+    { rideId: 1116, driverId: 1116, customerId: "3135d1a4-5d91-4a90-ae91-feb60b7d1b90" },
+    { rideId: 1117, driverId: 1117, customerId: "15f682d5-e02f-4b56-b5a5-87b6a5536d8f" },
+    { rideId: 1118, driverId: 1118, customerId: "24c42b7f-b9b2-4b6d-b3ff-bf22f6eddd73" }
+];

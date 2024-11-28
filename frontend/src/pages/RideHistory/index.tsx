@@ -31,7 +31,7 @@ function RideHistory() {
            Histórico de viagens
         </Typography>
         <Typography >
-            Visualiza o histórico de corridas que você contratou.
+            Acompanhe o histórico de corridas que você contratou.
         </Typography>
       </Paper>
       

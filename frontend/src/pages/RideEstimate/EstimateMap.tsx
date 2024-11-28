@@ -66,7 +66,7 @@ function EstimateMap({ children }: EstimateMapProps) {
         <Grid container spacing={4}>
           <Grid size={8}>
             <GoogleMap
-              mapContainerStyle={{ height: '900px', width: '100%' }}
+              mapContainerStyle={{ height: '820px', width: '100%' }}
               center={center}
               zoom={12}
             >

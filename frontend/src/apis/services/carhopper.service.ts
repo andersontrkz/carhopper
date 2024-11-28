@@ -16,6 +16,7 @@ export const patchConfirm = async (payload: IRideRequest.IRideConfirmBody): Prom
 export const getRidesHistory = async (
   { customerId }: IRideRequest.IRidesHistoryParams, { driverId }: IRideRequest.IRidesHistoryQuery
 ): Promise<IRideResponse.IRidesHistory> => {
-  const response = await CARHOPPER_API_V1.get(`${PATH}/${customerId}`, { params: { driver_id: driverId } });
+  const response = await CARHOPPER_API_V1.get(
+    `${PATH}/${customerId}`, { params: driverId ? { driver_id: driverId } : {} });
   return response.data;
 };

@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 
+import { ICustomError } from "@/types/interfaces/errors.interface";
+
 import { normalizeError } from './normalizeError';
-import { ICustomError } from '../../interfaces/errors.interface';
 
 interface IErrorHandler extends ICustomError, Error {};
 

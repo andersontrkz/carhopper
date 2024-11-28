@@ -4,6 +4,7 @@ import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import { Box } from '@mui/material';
+import { formatCurrency } from '@/utils/converters';
 
 type AccordionCardProps = {
   id: number;
@@ -42,7 +43,7 @@ function AccordionCard({ name, description, vehicle, value }: AccordionCardProps
         secondary={
           <Box display="flex" flexDirection="column">
             <Typography fontWeight={600} component="span" variant="body2" sx={{ color: 'text.primary' }}>
-                R$ {value} - {vehicle}
+              {formatCurrency(value)} - {vehicle}
             </Typography>
             <Typography component="span" variant="body2" sx={{ color: 'text.primary' }}>
               {description}

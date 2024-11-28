@@ -1,5 +1,7 @@
 import { ValidationError } from "yup";
-import { EErrorCode } from "../../interfaces/errors.interface";
+
+import { EErrorCode } from "@/types/interfaces/errors.interface";
+
 import BaseError from "./BaseError"
 
 export default class InvalidDataError extends BaseError {

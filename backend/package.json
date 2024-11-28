@@ -4,8 +4,10 @@
   "main": "index.js",
   "scripts": {
     "build": "npx tsc",
-    "start": "node ./build/server/index.js",
-    "dev": "npx nodemon --exec ts-node src/server/index.ts --watch src/ --ext ts",
+    "start": "ts-node -r tsconfig-paths/register ./build/server/index.js",
+    "dev": "npx nodemon -r tsconfig-paths/register --exec ts-node src/server/index.ts --watch src/ --ext ts",
+    "seeder": "ts-node -r tsconfig-paths/register src/database/seeders/index.ts",
+    "migrate": "sequelize-cli db:migrate --config src/config/config.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -32,7 +34,9 @@
     "@types/helmet": "^4.0.0",
     "@types/morgan": "^1.9.9",
     "@types/node": "^22.9.1",
+    "sequelize-cli": "^6.6.2",
     "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.2"
   }
 }

@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 
 import { formatExtendedDateTime } from '@/utils/date';
 import type { IRideHistory } from '@/types/interfaces/ride.interface';
+import { formatCurrency } from '@/utils/converters';
 
 type RidesHistoryTableProps = {
   ridesHistory: IRideHistory[];
@@ -41,6 +42,20 @@ function RidesHistoryTable({ ridesHistory }: RidesHistoryTableProps) {
     return 0;
   });
 
+  function getHeader(headerKey: string): string {
+    const allKeys: { [key: string]: string } = {
+      'driver': 'Motorista',
+      'date': 'Data',
+      'origin': 'Origem',
+      'destination': 'Destino',
+      'value': 'Valor',
+      'distance': 'Distância',
+      'duration': 'Duração'
+    };
+
+    return allKeys[headerKey];
+  }
+
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -53,7 +68,7 @@ function RidesHistoryTable({ ridesHistory }: RidesHistoryTableProps) {
                   direction={orderBy === column ? order : 'asc'}
                   onClick={() => handleRequestSort(column)}
                 >
-                  {column.charAt(0).toUpperCase() + column.slice(1)}
+                  {getHeader(column)}
                 </TableSortLabel>
               </TableCell>
             ))}
@@ -67,7 +82,7 @@ function RidesHistoryTable({ ridesHistory }: RidesHistoryTableProps) {
               <TableCell>{formatExtendedDateTime(cardItem.date)}</TableCell>
               <TableCell>{cardItem.origin}</TableCell>
               <TableCell>{cardItem.destination}</TableCell>
-              <TableCell>{cardItem.value}</TableCell>
+              <TableCell>{formatCurrency(cardItem.value)}</TableCell>
               <TableCell>{cardItem.distance}</TableCell>
               <TableCell>{cardItem.duration}</TableCell>
             </TableRow>

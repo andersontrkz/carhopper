@@ -1,35 +1,34 @@
-import { convertMetersToKilometers, convertSecondsToMinutes } from "../helpers/converters";
-import { getCoordinates, getDirectionsData } from "../apis/google.api";
-import { type IAddresses } from "../interfaces/ride.interface";
+import { getRouteData } from "@/apis/google.api";
+import RetrievingDataError from "@/middlewares/errorHandler/RetrievingDataError";
+import { IAddresses } from "@/types/interfaces/ride.interface";
+import { IGoogleService } from "@/types/interfaces/services/google.interface";
 import { type DirectionsResponseData } from "@googlemaps/google-maps-services-js";
-import RetrievingDataError from "../middlewares/errorHandler/RetrievingDataError";
-import { type IGoogleService } from "src/interfaces/services/google.interface";
 
-const getLocationsData = (directionsData: DirectionsResponseData): IGoogleService.ILocationData => {
-    const [route] = directionsData.routes;
-    const [step] = route.legs;
+const getDirectionsData = (directionsData: DirectionsResponseData): IGoogleService.IDirectionsData => {
+    const [route] = directionsData?.routes;
+    const [step] = route?.legs;
 
-    const distance = convertMetersToKilometers(step.distance.value);
-    const duration = convertSecondsToMinutes(step.duration.value);
+    const distance = step.distance.value;
+    const duration = step.duration.text;
 
-    return { distance, duration: String(duration) };
+    const origin = { latitude: step.start_location.lat, longitude: step.start_location.lng };
+    const destination = { latitude: step.end_location.lat, longitude: step.end_location.lng };    
+
+    return { distance, duration: duration, origin, destination };
 };
 
 
 const getRideData = async (addresses: IAddresses): Promise<IGoogleService.IRideData> => {
-    try {
-        const origin = await getCoordinates(addresses.origin);
-        const destination = await getCoordinates(addresses.destination);
-    
-        const directionsData = await getDirectionsData(addresses);
-        const { distance, duration } = getLocationsData(directionsData);
+    try {   
+        const routeResponse = await getRouteData(addresses);
+        const { distance, duration, origin, destination } = getDirectionsData(routeResponse);
     
         return {
             origin,
             destination,
             distance,
-            duration: duration,
-            routeResponse: directionsData,
+            duration,
+            routeResponse,
         };
     } catch (error: unknown) {
         throw new RetrievingDataError(error as Error);
